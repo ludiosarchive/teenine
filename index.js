@@ -1,6 +1,7 @@
 "use strict";
 
 const assert = require("assert");
+const keypress = require("keypress");
 
 // We use upside-down T9, because the number pad starts
 // with 7 8 9, unlike phone keypads which start with 1 2 3.
@@ -20,8 +21,8 @@ const numberToLetters = {
 
 const letterToNumbers = Object.create(null);
 
-for(const number of Object.keys(numberToLetters)) {
-	for(const letter of numberToLetters[number]) {
+for (const number of Object.keys(numberToLetters)) {
+	for (const letter of numberToLetters[number]) {
 		letterToNumbers[letter] = number;
 	}
 }
@@ -46,3 +47,13 @@ If you have no number pad, you can use
 'uio' for 456 and
 'jkl' for 123
 `);
+
+keypress(process.stdin);
+process.stdin.setRawMode(true);
+process.stdin.on('keypress', function(chunk, key) {
+	process.stdout.write('Get Chunk: ' + chunk + '\n');
+	if (key && key.ctrl && key.name == 'c') {
+		process.exit();
+	}
+});
+process.stdin.resume();
