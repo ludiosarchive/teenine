@@ -83,6 +83,8 @@ Press ctrl-c or ctrl-d to exit
 Start typing:
 `);
 
+const punctuationPassthrough = /^[ `~!@#\$%\^&\*\(\)-=_\+\[\]\{\}\\\|:;'",<\.>\/\?]$/;
+
 let lastLine = "";
 
 function redrawLine() {
@@ -98,6 +100,8 @@ process.stdin.on('keypress', function(chunk, key) {
 		process.exit();
 	} else if (key && key.name === 'backspace') {
 		lastLine = lastLine.substr(0, lastLine.length - 1);
+	} else if (punctuationPassthrough.test(chunk)) {
+		lastLine += chunk;
 	} else {
 		let number = physicalKeyToNumber[chunk];
 		if (!number) {
