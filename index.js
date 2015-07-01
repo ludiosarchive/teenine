@@ -75,10 +75,21 @@ keys below the 789 keys in your number row:
 'uio' for 456 and
 'jkl' for 123
 
+Press Backspace to delete
+Press Enter for new line
+Press punctuation keys for punctuation
 Press ctrl-c or ctrl-d to exit
 
 Start typing:
 `);
+
+let lastLine = "";
+
+function redrawLine() {
+	process.stdout.clearLine();
+	process.stdout.cursorTo(0);
+	process.stdout.write(lastLine);
+}
 
 keypress(process.stdin);
 process.stdin.setRawMode(true);
@@ -87,10 +98,15 @@ process.stdin.on('keypress', function(chunk, key) {
 		process.exit();
 	}
 
-	let number = physicalKeyToNumber[chunk];
-	if(!number) {
-		return;
+	if (key && key.name === 'backspace') {
+		lastLine = lastLine.substr(0, lastLine.length - 1);
+	} else {
+		let number = physicalKeyToNumber[chunk];
+		if (!number) {
+			return;
+		}
+		lastLine += number;
 	}
-	process.stdout.write(number);
+	redrawLine();
 });
 process.stdin.resume();
