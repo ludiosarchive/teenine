@@ -29,5 +29,20 @@ for(const number of Object.keys(numberToLetters)) {
 assert.strictEqual(Object.keys(numberToLetters).length, 8);
 assert.strictEqual(Object.keys(letterToNumbers).length, 26);
 
-console.log(numberToLetters);
-console.log(letterToNumbers);
+console.log(
+`Upside-down T9 IME
+
+        8     9
+       abc   def
+
+  4     5     6
+ ghi   jkl   mno
+
+  1     2     3
+ pqrs  tuv  wxyz
+
+If you have no number pad, you can use
+'789' for 789 and
+'uio' for 456 and
+'jkl' for 123
+`);
