@@ -69,18 +69,28 @@ console.log(
   1     2     3
  pqrs  tuv  wxyz
 
-If you have no number pad, you can use
+If you have no number pad, you can use the
+keys below the 789 keys in your number row:
 '789' for 789 and
 'uio' for 456 and
 'jkl' for 123
+
+Press ctrl-c or ctrl-d to exit
+
+Start typing:
 `);
 
 keypress(process.stdin);
 process.stdin.setRawMode(true);
 process.stdin.on('keypress', function(chunk, key) {
-	process.stdout.write('Get Chunk: ' + chunk + '\n');
-	if (key && key.ctrl && key.name == 'c') {
+	if (key && key.ctrl && (key.name === 'c' || key.name === 'd')) {
 		process.exit();
 	}
+
+	let number = physicalKeyToNumber[chunk];
+	if(!number) {
+		return;
+	}
+	process.stdout.write(number);
 });
 process.stdin.resume();
