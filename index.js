@@ -111,4 +111,5 @@ process.stdin.on('keypress', function(chunk, key) {
 	}
 	redrawLine();
 });
+// Don't let node exit immediately
 process.stdin.resume();
