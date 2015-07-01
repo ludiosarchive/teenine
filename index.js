@@ -96,9 +96,7 @@ process.stdin.setRawMode(true);
 process.stdin.on('keypress', function(chunk, key) {
 	if (key && key.ctrl && (key.name === 'c' || key.name === 'd')) {
 		process.exit();
-	}
-
-	if (key && key.name === 'backspace') {
+	} else if (key && key.name === 'backspace') {
 		lastLine = lastLine.substr(0, lastLine.length - 1);
 	} else {
 		let number = physicalKeyToNumber[chunk];
