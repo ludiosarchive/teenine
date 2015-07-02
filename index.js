@@ -190,7 +190,19 @@ class LineEditor {
 	redrawLine() {
 		process.stdout.clearLine();
 		process.stdout.cursorTo(0);
-		process.stdout.write(`${this.left}${underlined(this.getCandidateWord())}${this.right}`);
+		const word = this.getCandidateWord();
+		const out = `${this.left}${underlined(word)}${this.right}`;
+		process.stdout.write(out);
+		if(this.t9 !== null) {
+			// Candidate word might be longer than what the user
+			// has actually typed, so move the cursor back a little
+			// if necessary.
+			process.stdout.cursorTo(
+				out.length -
+				underlined("").length -
+				(word.length - this.t9.length)
+			);
+		}
 	}
 
 	backspace() {
