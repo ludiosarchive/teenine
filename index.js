@@ -104,10 +104,9 @@ process.stdin.on('keypress', function(chunk, key) {
 		lastLine += chunk;
 	} else {
 		let number = physicalKeyToNumber[chunk];
-		if (!number) {
-			return;
+		if(number) {
+			lastLine += number;
 		}
-		lastLine += number;
 	}
 	redrawLine();
 });
