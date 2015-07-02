@@ -180,18 +180,25 @@ class LineEditor {
 		}
 	}
 
+	setCandidates(candidates) {
+		assert(candidates.length >= 0, candidates);
+		this.candidates = candidates;
+		// Old index might now be out of bounds
+		this.candidateIdx = 0;
+	}
+
 	handleDigit(digit) {
 		if (digit) {
 			this.t9 += digit;
 		}
-		this.candidates = (dictionary[this.t9] || []).slice();
+		const candidates = (dictionary[this.t9] || []).slice();
 		// Sort by word frequency, most frequent first
-		this.candidates.sort(function(c1, c2) {
+		candidates.sort(function(c1, c2) {
 			return c2[1] > c1[1] ? 1 : -1;
 		});
 		// The actual number entered by the user is also a word candidate
-		this.candidates.push([this.t9, 0]);
-		//console.log(this.candidates);
+		candidates.push([this.t9, 0]);
+		this.setCandidates(candidates);
 	}
 
 	jumpCandidate(idx) {
