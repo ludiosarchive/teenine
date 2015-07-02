@@ -60,7 +60,14 @@ assert.strictEqual(Object.keys(physicalKeyToNumber).length, 9 + 6);
 function wordToT9(word) {
 	let s = "";
 	for (const letter of word) {
-		s += letterToNumber[letter];
+		let num;
+		if(/^\d$/.test(letter)) {
+			num = letter;
+		} else {
+			num = letterToNumber[letter];
+		}
+		assert.notStrictEqual(num, undefined);
+		s += num;
 	}
 	return s;
 }
@@ -187,17 +194,37 @@ class LineEditor {
 			this.updateCandidates();
 		} else if (this.left.length) {
 			this.left = this.left.substr(0, this.left.length - 1);
+			// If user has backspaced into a T9 word, give them
+			// access to the T9 controls for that word.
+			const t9Re = /[a-z0-9]+$/;
+			const lastWordMatch = this.left.match(t9Re);
+			if(lastWordMatch) {
+				this.left = this.left.replace(t9Re, "");
+				this.t9 = wordToT9(lastWordMatch[0]);
+				this.updateCandidates(lastWordMatch[0]);
+			}
 		}
 	}
 
-	setCandidates(candidates) {
+	setCandidates(candidates, wantWord) {
 		assert(candidates.length >= 0, candidates);
 		this.candidates = candidates;
 		// Old index might now be out of bounds
 		this.candidateIdx = 0;
+		// We might want a specific word to be the candidate
+		if(wantWord !== undefined) {
+			let idx = 0;
+			for (const c of this.candidates) {
+				if(c[0] === wantWord) {
+					this.candidateIdx = idx;
+					break;
+				}
+				idx += 1;
+			}
+		}
 	}
 
-	updateCandidates() {
+	updateCandidates(wantWord) {
 		const candidates = (dictionary[this.t9] || []).slice();
 		// Sort by word frequency, most frequent first
 		candidates.sort(function(c1, c2) {
@@ -205,7 +232,7 @@ class LineEditor {
 		});
 		// The actual number entered by the user is also a word candidate
 		candidates.push([this.t9, 0]);
-		this.setCandidates(candidates);
+		this.setCandidates(candidates, wantWord);
 	}
 
 	jumpCandidate(idx) {
