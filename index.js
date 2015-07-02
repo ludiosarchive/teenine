@@ -165,9 +165,6 @@ class LineEditor {
 		// Which candidate is currently selected
 		this.candidateIdx = 0;
 
-		// Everything to the right of the currently-edited word
-		this.right = "";
-
 		this._boundOnKeypress = this.onKeypress.bind(this);
 	}
 
@@ -196,7 +193,7 @@ class LineEditor {
 		process.stdout.clearLine();
 		process.stdout.cursorTo(0);
 		const word = this.getCandidateWord();
-		const out = `${this.left}${underlined(word)}${this.right}`;
+		const out = `${this.left}${underlined(word)}`;
 		process.stdout.write(out);
 		if(this.t9 !== null) {
 			// Candidate word might be longer than what the user
