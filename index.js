@@ -85,17 +85,21 @@ function adjustFrequency(word, freq) {
 
 const dictionary = Object.create(null);
 for (const line of fs.readFileSync(path.join(__dirname, "count_1w.txt"), "utf-8").split("\n")) {
-	if(!line) {
+	if (!line) {
 		continue;
 	}
 	const _ = line.split("\t");
-	const word = _[0];
+	let word = _[0];
 	const freq = adjustFrequency(word, Number(_[1]));
-	const t9 = wordToT9(word);
-	if(!dictionary[t9]) {
-		dictionary[t9] = [];
+	let t9 = wordToT9(word);
+	// Insert both the full T9 word and all prefixes thereof
+	while (t9) {
+		if (!dictionary[t9]) {
+			dictionary[t9] = [];
+		}
+		dictionary[t9].push([word, freq]);
+		t9 = t9.substr(0, t9.length - 1);
 	}
-	dictionary[t9].push([word, freq]);
 }
 
 console.log(
