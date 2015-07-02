@@ -1,6 +1,7 @@
 "use strict";
 
 const fs = require("fs");
+const path = require("path");
 const assert = require("assert");
 const keypress = require("keypress");
 
@@ -83,7 +84,7 @@ function adjustFrequency(word, freq) {
 }
 
 const dictionary = Object.create(null);
-for (const line of fs.readFileSync("count_1w.txt", "utf-8").split("\n")) {
+for (const line of fs.readFileSync(path.join(__dirname, "count_1w.txt"), "utf-8").split("\n")) {
 	if(!line) {
 		continue;
 	}
