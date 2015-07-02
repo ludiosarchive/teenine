@@ -127,6 +127,7 @@ More keyboard controls:
 Next T9 match:       p | ; | down arrow | f
 Previous T9 match:   h | y |   up arrow | e
 Confirm match:       space | punctuation keys
+New line:            enter
 Delete backwards:    backspace
 Exit:                ctrl-c | ctrl-d
 
@@ -289,6 +290,11 @@ class LineEditor {
 			this.releaseStdin();
 		} else if (key && key.name === 'backspace') {
 			this.backspace();
+		} else if (key && (key.name === 'enter' || key.name === 'return')) {
+			this.acceptCandidate();
+			this.redrawLine();
+			process.stdout.write("\n");
+			this.left = "";
 		} else if (chunk === 'p' || chunk === ";" || chunk === 'f' || (key && key.name === 'down')) {
 			this.jumpCandidate(1);
 		} else if (chunk === 'y' || chunk === 'h' || chunk === 'e' || (key && key.name === 'up')) {
