@@ -133,7 +133,9 @@ process.stdin.on('keypress', function(chunk, key) {
 			lastLine += number;
 		}
 		const t9 = lastLine.substr(newWordAt, lastLine.length);
-		const candidates = dictionary[t9] || [];
+		const candidates = (dictionary[t9] || []).slice();
+		// The actual number entered by the user is also a word candidate
+		candidates.push([t9, 0]);
 		console.log({candidates});
 	}
 	redrawLine();
