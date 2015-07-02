@@ -124,8 +124,8 @@ If you have no numpad, use the 789 keys and the keys below them:
 
 More keyboard controls:
 
-Next T9 match:       p | ; | down arrow | f
-Previous T9 match:   h | y |   up arrow | e
+Next T9 match:       f | down arrow | p | ;
+Previous T9 match:   e |   up arrow | h | y
 Confirm match:       space | punctuation keys
 New line:            enter
 Delete backwards:    backspace
