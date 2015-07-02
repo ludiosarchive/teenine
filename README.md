@@ -1,4 +1,6 @@
-T9 IME prototype for io.js on Linux or OS X
+Command-line T9 IME prototype, for io.js on Linux or OS X
+
+Install a recent io.js from https://iojs.org/, then
 
 ```
 git clone https://github.com/ivan/teenine
