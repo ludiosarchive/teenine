@@ -100,7 +100,7 @@ keys below the 789 keys in your number row:
 
 Press p or Down-arrow to select the next T9 match
 Press h or y or Up-arrow to select the previous T9 match
-Press Enter to confirm match
+Press Space to confirm match
 
 Press Backspace to delete
 Press punctuation keys for punctuation
@@ -108,6 +108,12 @@ Press ctrl-c or ctrl-d to exit
 
 Start typing:
 `);
+
+function underlined(s) {
+	// 4 = underlined
+	// 22 = normal color
+	return `\x1b[4;22m${s}\x1b[0m`;
+}
 
 const punctuationPassthrough = /^[ `~!@#\$%\^&\*\(\)\-=_\+\[\]\{\}\\\|:;'",<\.>\/\?]$/;
 
@@ -155,7 +161,7 @@ class LineEditor {
 	redrawLine() {
 		process.stdout.clearLine();
 		process.stdout.cursorTo(0);
-		process.stdout.write(this.left + this.getCandidateWord() + this.right);
+		process.stdout.write(`${this.left}${underlined(this.getCandidateWord())}${this.right}`);
 	}
 
 	backspace() {
