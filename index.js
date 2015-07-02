@@ -91,7 +91,7 @@ for (const line of fs.readFileSync("count_1w.txt", "utf-8").split("\n")) {
 }
 
 console.log(
-`Upside-down T9 IME
+`Welcome to the upside-down T9 IME, designed for your numpad.
 
         8     9
        abc   def
@@ -102,22 +102,29 @@ console.log(
   1     2     3
  pqrs  tuv  wxyz
 
-If you have no number pad, you can use the
-keys below the 789 keys in your number row:
-'789' for 789 and
+If you have no numpad, use the 789 keys and the keys below them:
 'uio' for 456 and
 'jkl' for 123
 
-Press p or Down arrow to select the next T9 match
-Press h or y or Up arrow to select the previous T9 match
-Press Space to confirm match
+More keyboard controls:
 
-Press Backspace to delete
-Press punctuation keys for punctuation
-Press ctrl-c or ctrl-d to exit
+Next T9 match:       p | ; | down arrow | f
+Previous T9 match:   h | y |   up arrow | e
+Confirm match:       space | punctuation keys
+Delete backwards:    backspace
+Exit:                ctrl-c | ctrl-d
 
 Start typing:
 `);
+
+/**
+ * p ; and h y are for right-hand-only operation around the fake
+ * numpad in the middle of the keyboard
+ *
+ * up arrow and down arrow are for users who don't care about ergonomics
+ *
+ * e and f are for two-handed operation
+ */
 
 function underlined(s) {
 	// 4 = underlined
@@ -225,9 +232,9 @@ class LineEditor {
 			this.releaseStdin();
 		} else if (key && key.name === 'backspace') {
 			this.backspace();
-		} else if (key && (key.name === 'p' || key.name === 'down')) {
+		} else if (chunk === 'p' || chunk === ";" || chunk === 'f' || (key && key.name === 'down')) {
 			this.jumpCandidate(1);
-		} else if (key && (key.name === 'y' || key.name === 'h' || key.name === 'up')) {
+		} else if (chunk === 'y' || chunk === 'h' || chunk === 'e' || (key && key.name === 'up')) {
 			this.jumpCandidate(-1);
 		} else if (punctuationPassthrough.test(chunk)) {
 			this.acceptCandidate();
