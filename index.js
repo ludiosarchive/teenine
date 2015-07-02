@@ -107,7 +107,7 @@ Press ctrl-c or ctrl-d to exit
 Start typing:
 `);
 
-const punctuationPassthrough = /^[ `~!@#\$%\^&\*\(\)-=_\+\[\]\{\}\\\|:;'",<\.>\/\?]$/;
+const punctuationPassthrough = /^[ `~!@#\$%\^&\*\(\)\-=_\+\[\]\{\}\\\|:;'",<\.>\/\?]$/;
 
 let lastLine = "";
 let newWordAt = 0;
