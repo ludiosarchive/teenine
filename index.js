@@ -242,7 +242,16 @@ class LineEditor {
 	}
 
 	updateCandidates(wantWord) {
-		const candidates = (dictionary[this.t9] || []).slice();
+		let candidates = (dictionary[this.t9] || []).slice();
+		candidates = candidates.map(function(c, idx) {
+			if (c[0].length === this.t9.length) {
+				c = c.slice();
+				// Boost signal for candidates whose lengths exactly
+				// match the length of user's current input.
+				c[1] *= 4;
+			}
+			return c;
+		}.bind(this));
 		// Sort by word frequency, most frequent first
 		candidates.sort(function(c1, c2) {
 			return c2[1] > c1[1] ? 1 : -1;
