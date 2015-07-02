@@ -177,6 +177,9 @@ class LineEditor {
 	backspace() {
 		if (this.t9.length) {
 			this.t9 = this.t9.substr(0, this.t9.length - 1);
+			this.updateCandidates();
+		} else if (this.left.length) {
+			this.left = this.left.substr(0, this.left.length - 1);
 		}
 	}
 
@@ -187,10 +190,7 @@ class LineEditor {
 		this.candidateIdx = 0;
 	}
 
-	handleDigit(digit) {
-		if (digit) {
-			this.t9 += digit;
-		}
+	updateCandidates() {
 		const candidates = (dictionary[this.t9] || []).slice();
 		// Sort by word frequency, most frequent first
 		candidates.sort(function(c1, c2) {
@@ -233,8 +233,11 @@ class LineEditor {
 			this.acceptCandidate();
 			this.left += chunk;
 		} else {
-			let number = physicalKeyToNumber[chunk];
-			this.handleDigit(number);
+			const digit = physicalKeyToNumber[chunk];
+			if (digit) {
+				this.t9 += digit;
+			}
+			this.updateCandidates();
 		}
 		this.redrawLine();
 	}
