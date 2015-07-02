@@ -25,7 +25,6 @@ const numberToLetters = {
 }
 
 const letterToNumber = Object.create(null);
-
 for (const number of Object.keys(numberToLetters)) {
 	for (const letter of numberToLetters[number]) {
 		letterToNumber[letter] = number;
@@ -52,7 +51,6 @@ const numberToPhysicalKeys = {
 }
 
 const physicalKeyToNumber = Object.create(null);
-
 for (const number of Object.keys(numberToPhysicalKeys)) {
 	for (const letter of numberToPhysicalKeys[number]) {
 		physicalKeyToNumber[letter] = number;
