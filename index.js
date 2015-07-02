@@ -1,5 +1,6 @@
 "use strict";
 
+const fs = require("fs");
 const assert = require("assert");
 const keypress = require("keypress");
 
@@ -19,16 +20,16 @@ const numberToLetters = {
 	3: "wxyz"
 }
 
-const letterToNumbers = Object.create(null);
+const letterToNumber = Object.create(null);
 
 for (const number of Object.keys(numberToLetters)) {
 	for (const letter of numberToLetters[number]) {
-		letterToNumbers[letter] = number;
+		letterToNumber[letter] = number;
 	}
 }
 
 assert.strictEqual(Object.keys(numberToLetters).length, 8);
-assert.strictEqual(Object.keys(letterToNumbers).length, 26);
+assert.strictEqual(Object.keys(letterToNumber).length, 26);
 
 // Some users have no number pad, so let them use
 // the keys below the 789 keys in their number row.
@@ -56,6 +57,29 @@ for (const number of Object.keys(numberToPhysicalKeys)) {
 
 assert.strictEqual(Object.keys(numberToPhysicalKeys).length, 9);
 assert.strictEqual(Object.keys(physicalKeyToNumber).length, 9 + 6);
+
+function wordToT9(word) {
+	let s = "";
+	for (const letter of word) {
+		s += letterToNumber[letter];
+	}
+	return s;
+}
+
+const dictionary = Object.create(null);
+for (const line of fs.readFileSync("count_1w.txt", "utf-8").split("\n")) {
+	if(!line) {
+		continue;
+	}
+	const _ = line.split("\t");
+	const word = _[0];
+	const freq = Number(_[1]);
+	const t9 = wordToT9(word);
+	if(!dictionary[t9]) {
+		dictionary[t9] = [];
+	}
+	dictionary[t9].push([word, freq]);
+}
 
 console.log(
 `Upside-down T9 IME
@@ -86,6 +110,7 @@ Start typing:
 const punctuationPassthrough = /^[ `~!@#\$%\^&\*\(\)-=_\+\[\]\{\}\\\|:;'",<\.>\/\?]$/;
 
 let lastLine = "";
+let newWordAt = 0;
 
 function redrawLine() {
 	process.stdout.clearLine();
@@ -107,6 +132,9 @@ process.stdin.on('keypress', function(chunk, key) {
 		if(number) {
 			lastLine += number;
 		}
+		const t9 = lastLine.substr(newWordAt, lastLine.length);
+		const candidates = dictionary[t9] || [];
+		console.log({candidates});
 	}
 	redrawLine();
 });
