@@ -5,6 +5,10 @@ const path = require("path");
 const assert = require("assert");
 const keypress = require("keypress");
 
+if (process.platform === "win32") {
+	throw new Error("win32 is not supported due to lack of real TTY");
+}
+
 // We use upside-down T9, because the number pad starts
 // with 7 8 9, unlike phone keypads which start with 1 2 3.
 const numberToLetters = {
