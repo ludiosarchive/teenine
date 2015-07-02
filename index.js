@@ -75,9 +75,9 @@ function wordToT9(word) {
 
 // Tweak frequency for some words to get better results
 function adjustFrequency(word, freq) {
-	if(word === "hi") {
+	if (word === "hi") {
 		return freq * 3;
-	} else if(word === "ii") {
+	} else if (word === "ii") {
 		return freq / 2;
 	}
 	return freq;
@@ -203,7 +203,7 @@ class LineEditor {
 			// access to the T9 controls for that word.
 			const t9Re = /[a-z0-9]+$/;
 			const lastWordMatch = this.left.match(t9Re);
-			if(lastWordMatch) {
+			if (lastWordMatch) {
 				this.left = this.left.replace(t9Re, "");
 				this.t9 = wordToT9(lastWordMatch[0]);
 				this.updateCandidates(lastWordMatch[0]);
