@@ -66,7 +66,7 @@ function wordToT9(word) {
 	let s = "";
 	for (const letter of word) {
 		let num;
-		if(/^\d$/.test(letter)) {
+		if (/^\d$/.test(letter)) {
 			num = letter;
 		} else {
 			num = letterToNumber[letter];
@@ -195,7 +195,7 @@ class LineEditor {
 		const word = this.getCandidateWord();
 		const out = `${this.left}${underlined(word)}`;
 		process.stdout.write(out);
-		if(this.t9 !== null) {
+		if (this.t9 !== null) {
 			// Candidate word might be longer than what the user
 			// has actually typed, so move the cursor back a little
 			// if necessary.
@@ -231,10 +231,10 @@ class LineEditor {
 		// Old index might now be out of bounds
 		this.candidateIdx = 0;
 		// We might want a specific word to be the candidate
-		if(wantWord !== undefined) {
+		if (wantWord !== undefined) {
 			let idx = 0;
 			for (const c of this.candidates) {
-				if(c[0] === wantWord) {
+				if (c[0] === wantWord) {
 					this.candidateIdx = idx;
 					break;
 				}
