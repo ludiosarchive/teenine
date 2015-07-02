@@ -108,8 +108,8 @@ keys below the 789 keys in your number row:
 'uio' for 456 and
 'jkl' for 123
 
-Press p or Down-arrow to select the next T9 match
-Press h or y or Up-arrow to select the previous T9 match
+Press p or Down arrow to select the next T9 match
+Press h or y or Up arrow to select the previous T9 match
 Press Space to confirm match
 
 Press Backspace to delete
