@@ -175,6 +175,10 @@ class LineEditor {
 			this.t9 += digit;
 		}
 		this.candidates = (dictionary[this.t9] || []).slice();
+		// Sort by word frequency, most frequent first
+		this.candidates.sort(function(c1, c2) {
+			return c2[1] > c1[1] ? 1 : -1;
+		});
 		// The actual number entered by the user is also a word candidate
 		this.candidates.push([this.t9, 0]);
 	}
