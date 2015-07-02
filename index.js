@@ -65,6 +65,16 @@ function wordToT9(word) {
 	return s;
 }
 
+// Tweak frequency for some words to get better results
+function adjustFrequency(word, freq) {
+	if(word === "hi") {
+		return freq * 3;
+	} else if(word === "ii") {
+		return freq / 2;
+	}
+	return freq;
+}
+
 const dictionary = Object.create(null);
 for (const line of fs.readFileSync("count_1w.txt", "utf-8").split("\n")) {
 	if(!line) {
@@ -72,7 +82,7 @@ for (const line of fs.readFileSync("count_1w.txt", "utf-8").split("\n")) {
 	}
 	const _ = line.split("\t");
 	const word = _[0];
-	const freq = Number(_[1]);
+	const freq = adjustFrequency(word, Number(_[1]));
 	const t9 = wordToT9(word);
 	if(!dictionary[t9]) {
 		dictionary[t9] = [];
@@ -181,6 +191,7 @@ class LineEditor {
 		});
 		// The actual number entered by the user is also a word candidate
 		this.candidates.push([this.t9, 0]);
+		//console.log(this.candidates);
 	}
 
 	jumpCandidate(idx) {
