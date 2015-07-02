@@ -6,7 +6,6 @@ const keypress = require("keypress");
 
 // We use upside-down T9, because the number pad starts
 // with 7 8 9, unlike phone keypads which start with 1 2 3.
-
 const numberToLetters = {
 	8: "abc",
 	9: "def",
@@ -99,8 +98,11 @@ keys below the 789 keys in your number row:
 'uio' for 456 and
 'jkl' for 123
 
+Press p or Down-arrow to select the next T9 match
+Press h or y or Up-arrow to select the previous T9 match
+Press Enter to confirm match
+
 Press Backspace to delete
-Press Enter for new line
 Press punctuation keys for punctuation
 Press ctrl-c or ctrl-d to exit
 
@@ -109,36 +111,106 @@ Start typing:
 
 const punctuationPassthrough = /^[ `~!@#\$%\^&\*\(\)\-=_\+\[\]\{\}\\\|:;'",<\.>\/\?]$/;
 
-let lastLine = "";
-let newWordAt = 0;
+class LineEditor {
+	constructor() {
+		// Everything to the left of the currently-edited word
+		this.left = "";
 
-function redrawLine() {
-	process.stdout.clearLine();
-	process.stdout.cursorTo(0);
-	process.stdout.write(lastLine);
+		// T9 for the word we're editing
+		this.t9 = "";
+
+		// Word candidates for the current T9
+		this.candidates = null;
+
+		// Which candidate is currently selected
+		this.candidateIdx = 0;
+
+		// Everything to the right of the currently-edited word
+		this.right = "";
+
+		this._boundOnKeypress = this.onKeypress.bind(this);
+	}
+
+	grabStdin() {
+		keypress(process.stdin);
+		process.stdin.setRawMode(true);
+		// Don't let node exit immediately
+		process.stdin.resume();
+		process.stdin.on('keypress', this._boundOnKeypress);
+	}
+
+	releaseStdin() {
+		process.stdin.setRawMode(false);
+		process.stdin.removeListener('keypress', this._boundOnKeypress);
+		process.stdin.pause();
+	}
+
+	getCandidateWord() {
+		if (this.candidates === null) {
+			return "";
+		}
+		return this.candidates[this.candidateIdx][0];
+	}
+
+	redrawLine() {
+		process.stdout.clearLine();
+		process.stdout.cursorTo(0);
+		process.stdout.write(this.left + this.getCandidateWord() + this.right);
+	}
+
+	backspace() {
+		if (this.t9.length) {
+			this.t9 = this.t9.substr(0, this.t9.length - 1);
+		}
+	}
+
+	handleDigit(digit) {
+		if (digit) {
+			this.t9 += digit;
+		}
+		this.candidates = (dictionary[this.t9] || []).slice();
+		// The actual number entered by the user is also a word candidate
+		this.candidates.push([this.t9, 0]);
+	}
+
+	jumpCandidate(idx) {
+		if (this.candidates === null) {
+			return;
+		}
+		this.candidateIdx += idx;
+		if (this.candidateIdx >= this.candidates.length) {
+			this.candidateIdx = 0;
+		} else if (this.candidateIdx < 0) {
+			this.candidateIdx = this.candidates.length - 1;
+		}
+	}
+
+	acceptCandidate() {
+		this.left += this.getCandidateWord();
+		this.t9 = "";
+		this.candidates = null;
+		this.candidateIdx = 0;
+	}
+
+	onKeypress(chunk, key) {
+		if (key && key.ctrl && (key.name === 'c' || key.name === 'd')) {
+			this.releaseStdin();
+		} else if (key && key.name === 'backspace') {
+			this.backspace();
+		} else if (key && (key.name === 'p' || key.name === 'down')) {
+			this.jumpCandidate(1);
+		} else if (key && (key.name === 'y' || key.name === 'h' || key.name === 'up')) {
+			this.jumpCandidate(-1);
+		} else if (punctuationPassthrough.test(chunk)) {
+			this.acceptCandidate();
+			this.left += chunk;
+		} else {
+			let number = physicalKeyToNumber[chunk];
+			this.handleDigit(number);
+		}
+		this.redrawLine();
+	}
 }
 
-keypress(process.stdin);
-process.stdin.setRawMode(true);
-process.stdin.on('keypress', function(chunk, key) {
-	if (key && key.ctrl && (key.name === 'c' || key.name === 'd')) {
-		process.exit();
-	} else if (key && key.name === 'backspace') {
-		lastLine = lastLine.substr(0, lastLine.length - 1);
-	} else if (punctuationPassthrough.test(chunk)) {
-		lastLine += chunk;
-	} else {
-		let number = physicalKeyToNumber[chunk];
-		if(number) {
-			lastLine += number;
-		}
-		const t9 = lastLine.substr(newWordAt, lastLine.length);
-		const candidates = (dictionary[t9] || []).slice();
-		// The actual number entered by the user is also a word candidate
-		candidates.push([t9, 0]);
-		console.log({candidates});
-	}
-	redrawLine();
-});
-// Don't let node exit immediately
-process.stdin.resume();
+const editor = new LineEditor();
+editor.grabStdin();
